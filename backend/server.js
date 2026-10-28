@@ -72,3 +72,5 @@ app.listen(PORT, () => {
   console.log(`[Server] Express server running on port ${PORT}`);
   console.log(`[Server] API available at http://localhost:${PORT}/api`);
 });
+// Healthcare API server
+

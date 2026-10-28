@@ -146,7 +146,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// @desc    Delete a user (Ask password & match, Prevent from deleting own data)
+// @desc    Delete a user (Ask password & match, supports self-deletion)
 // @route   DELETE /api/users/:id
 // @access  Private
 export const deleteUser = async (req, res) => {
@@ -154,17 +154,10 @@ export const deleteUser = async (req, res) => {
     const { id } = req.params;
     const { password } = req.body;
 
-    // Whiteboard requirement: "Prevent from deleting own data"
-    if (req.user._id.toString() === id.toString()) {
-      return res.status(403).json({
-        message: 'Prohibited: You cannot delete your own account. Self-deletion is prevented by policy.',
-      });
-    }
-
-    // Whiteboard requirement: "Ask password & match"
+    // Password confirmation required
     if (!password) {
       return res.status(400).json({
-        message: 'Password confirmation is required to delete a user.',
+        message: 'Password confirmation is required to delete a user account.',
       });
     }
 
@@ -186,11 +179,15 @@ export const deleteUser = async (req, res) => {
       return res.status(404).json({ message: 'User to delete was not found.' });
     }
 
+    const isSelf = req.user._id.toString() === id.toString();
     await User.findByIdAndDelete(id);
 
     return res.status(200).json({
-      message: `User '${targetUser.name}' (${targetUser.email}) was deleted successfully.`,
+      message: isSelf
+        ? `Your account (${targetUser.email}) was deleted successfully.`
+        : `User '${targetUser.name}' (${targetUser.email}) was deleted successfully.`,
       deletedUserId: id,
+      isSelfDeleted: isSelf,
     });
   } catch (error) {
     console.error('[Delete User error]:', error);

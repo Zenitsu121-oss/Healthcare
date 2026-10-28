@@ -67,26 +67,15 @@ export const UserCard = ({
           <Edit3 size={14} /> Update
         </button>
 
-        {/* Delete Button (Whiteboard: Prevent from deleting own data) */}
-        {isCurrentUser ? (
-          <button
-            className="btn btn-secondary btn-sm"
-            disabled
-            title="Self-deletion prohibited: Cannot delete own account"
-            style={{ opacity: 0.4, cursor: 'not-allowed', marginLeft: 'auto' }}
-          >
-            <Trash2 size={14} /> Delete
-          </button>
-        ) : (
-          <button
-            className="btn btn-danger btn-sm"
-            onClick={() => onDelete(user)}
-            title="Delete this user"
-            style={{ marginLeft: 'auto' }}
-          >
-            <Trash2 size={14} /> Delete
-          </button>
-        )}
+        {/* Delete Button */}
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => onDelete(user)}
+          title={isCurrentUser ? "Delete your own account" : "Delete this user"}
+          style={{ marginLeft: 'auto' }}
+        >
+          <Trash2 size={14} /> Delete
+        </button>
       </div>
     </div>
   );

@@ -13,13 +13,8 @@ export const DeleteUserModal = ({ user, currentUserId, onClose, onDeleteSuccess 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isSelf) {
-      setError('Policy violation: You cannot delete your own account.');
-      return;
-    }
-
     if (!password) {
-      setError('Password is required to confirm user deletion.');
+      setError('Password is required to confirm account deletion.');
       return;
     }
 
@@ -42,112 +37,106 @@ export const DeleteUserModal = ({ user, currentUserId, onClose, onDeleteSuccess 
         <div className="modal-header">
           <div className="modal-title" style={{ color: 'var(--danger)' }}>
             <AlertTriangle size={22} />
-            <span>Confirm User Deletion</span>
+            <span>{isSelf ? 'Delete Your Account' : 'Confirm User Deletion'}</span>
           </div>
           <button className="modal-close-btn" onClick={onClose} aria-label="Close modal">
             <X size={20} />
           </button>
         </div>
 
-        {isSelf ? (
+        {isSelf && (
           <div
             style={{
-              padding: '1.25rem',
+              padding: '1rem',
               background: 'var(--danger-bg)',
               border: '1px solid var(--danger)',
               borderRadius: 'var(--radius-md)',
-              marginBottom: '1.5rem',
+              marginBottom: '1.25rem',
               display: 'flex',
               gap: '0.75rem',
               alignItems: 'flex-start',
             }}
           >
-            <ShieldAlert size={24} style={{ color: 'var(--danger)', flexShrink: 0 }} />
+            <ShieldAlert size={22} style={{ color: 'var(--danger)', flexShrink: 0 }} />
             <div>
-              <h4 style={{ color: '#fca5a5', marginBottom: '0.25rem' }}>Self-Deletion Prohibited</h4>
+              <h4 style={{ color: '#fca5a5', marginBottom: '0.25rem' }}>Warning: Self-Account Deletion</h4>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                According to security governance rules, you cannot delete your own logged-in account
-                (<strong>{user.email}</strong>). Please ask another administrator if this account must be terminated.
+                You are about to permanently delete your own profile (<strong>{user.email}</strong>).
+                Once deleted, you will be logged out automatically.
               </p>
             </div>
           </div>
-        ) : (
-          <div>
+        )}
+
+        <div>
+          {!isSelf && (
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
               Are you sure you want to permanently delete user{' '}
               <strong style={{ color: 'var(--text-main)' }}>{user.name}</strong> ({user.email})?
               This action cannot be undone.
             </p>
+          )}
 
-            {error && (
-              <div
-                style={{
-                  padding: '0.75rem 1rem',
-                  background: 'var(--danger-bg)',
-                  border: '1px solid var(--danger)',
-                  borderRadius: 'var(--radius-md)',
-                  color: '#fca5a5',
-                  fontSize: '0.85rem',
-                  marginBottom: '1.25rem',
-                }}
-              >
-                {error}
+          {error && (
+            <div
+              style={{
+                padding: '0.75rem 1rem',
+                background: 'var(--danger-bg)',
+                border: '1px solid var(--danger)',
+                borderRadius: 'var(--radius-md)',
+                color: '#fca5a5',
+                fontSize: '0.85rem',
+                marginBottom: '1.25rem',
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            {/* Ask Password & Match */}
+            <div
+              style={{
+                padding: '1rem',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: 'var(--radius-md)',
+                marginBottom: '1.5rem',
+              }}
+            >
+              <label className="form-label" style={{ color: '#f87171', fontWeight: 700 }}>
+                Enter Your Password to Confirm <span className="req">*</span>
+              </label>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                Provide your password to verify and authorize this permanent deletion.
+              </p>
+              <div className="input-wrapper">
+                <Lock className="input-icon" size={18} style={{ color: '#f87171' }} />
+                <input
+                  type="password"
+                  className="form-input"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError('');
+                  }}
+                  required
+                />
               </div>
-            )}
+            </div>
 
-            <form onSubmit={handleSubmit}>
-              {/* Whiteboard Requirement: Ask Password & Match */}
-              <div
-                style={{
-                  padding: '1rem',
-                  background: 'rgba(239, 68, 68, 0.08)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  borderRadius: 'var(--radius-md)',
-                  marginBottom: '1.5rem',
-                }}
-              >
-                <label className="form-label" style={{ color: '#f87171', fontWeight: 700 }}>
-                  Enter Your Password to Match & Confirm <span className="req">*</span>
-                </label>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                  Provide your active password to verify authorization for this deletion.
-                </p>
-                <div className="input-wrapper">
-                  <Lock className="input-icon" size={18} style={{ color: '#f87171' }} />
-                  <input
-                    type="password"
-                    className="form-input"
-                    placeholder="Enter password"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setError('');
-                    }}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
-                <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-danger" disabled={loading}>
-                  <Trash2 size={16} />
-                  {loading ? 'Verifying & Deleting...' : 'Confirm & Delete User'}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {isSelf && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button className="btn btn-secondary" onClick={onClose}>
-              Dismiss
-            </button>
-          </div>
-        )}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-danger" disabled={loading}>
+                <Trash2 size={16} />
+                {loading ? 'Verifying & Deleting...' : isSelf ? 'Delete My Account' : 'Confirm & Delete User'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ import DeleteUserModal from '../components/DeleteUserModal';
 import CreateUserModal from '../components/CreateUserModal';
 
 export const HomePage = ({ notify }) => {
-  const { currentUser, refreshUser } = useAuth();
+  const { currentUser, refreshUser, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
@@ -61,11 +61,17 @@ export const HomePage = ({ notify }) => {
     }
   };
 
-  // Handle User Delete Success
+  // Handle User Delete Success (including self-deletion)
   const handleDeleteSuccess = async (id, password) => {
     const res = await api.deleteUser(id, password);
     notify(res.message || 'User deleted successfully', 'success');
-    fetchUsers(searchQuery);
+    if ((currentUser && currentUser._id === id) || res.isSelfDeleted) {
+      setTimeout(() => {
+        logout();
+      }, 800);
+    } else {
+      fetchUsers(searchQuery);
+    }
   };
 
   // Handle User Creation Success

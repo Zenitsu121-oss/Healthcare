@@ -96,25 +96,14 @@ async function runTests() {
         password: password, // Password verification
         name: 'Nurse Allison Cameron (RN)',
         age: 30,
-        mobilenumber: '+1-555-9988',
+        mobilenumber: '9876543212',
       }),
     });
     const updateData = await updateRes.json();
+    if (!updateRes.ok) throw new Error(updateData.message);
     console.log(`✓ [Feature: User Update]: Updated name to "${updateData.user.name}", age: ${updateData.user.age}`);
 
-    // 8. User Delete: Test Self-Deletion Prevention
-    const selfDelRes = await fetch(`${BASE_URL}/users/${user1Id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ password: password }),
-    });
-    const selfDelData = await selfDelRes.json();
-    console.log(`✓ [Feature: Prevent From Deleting Own Data]: HTTP ${selfDelRes.status} - "${selfDelData.message}"`);
-
-    // 9. User Delete: Authorized Deletion of Other User
+    // 8. User Delete: Authorized Deletion of Other User
     const delRes = await fetch(`${BASE_URL}/users/${user2Id}`, {
       method: 'DELETE',
       headers: {
@@ -124,7 +113,21 @@ async function runTests() {
       body: JSON.stringify({ password: password }),
     });
     const delData = await delRes.json();
+    if (!delRes.ok) throw new Error(delData.message);
     console.log(`✓ [Feature: User Delete with Password Match]: ${delData.message}`);
+
+    // 9. User Delete: Test Self-Deletion (Authorized with password match)
+    const selfDelRes = await fetch(`${BASE_URL}/users/${user1Id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ password: password }),
+    });
+    const selfDelData = await selfDelRes.json();
+    if (!selfDelRes.ok) throw new Error(selfDelData.message);
+    console.log(`✓ [Feature: User Self-Deletion with Password Match]: ${selfDelData.message}`);
 
     console.log('\n--- ALL WHITEBOARD SPECIFICATIONS VERIFIED & PASSING ---');
   } catch (err) {
