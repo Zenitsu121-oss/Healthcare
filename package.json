@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Fullstack Healthcare User Management System with React, Express, and MongoDB",
   "scripts": {
-    "build": "npm --prefix backend install",
+    "build": "cd backend && npm install",
     "start": "node backend/server.js",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
