@@ -33,7 +33,7 @@ async function runTests() {
         email: email1,
         password: password,
         age: 45,
-        mobilenumber: '+1-555-0199',
+        mobilenumber: '9876543210',
       }),
     });
     const regData1 = await regRes1.json();
@@ -51,7 +51,7 @@ async function runTests() {
         email: email2,
         password: password,
         age: 29,
-        mobilenumber: '+1-555-0144',
+        mobilenumber: '9876543211',
       }),
     });
     const regData2 = await regRes2.json();

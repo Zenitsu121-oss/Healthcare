@@ -27,15 +27,20 @@ export const UpdateUserModal = ({ user, onClose, onUpdateSuccess }) => {
       return;
     }
 
+    if (!formData.mobilenumber || !/^\d{10}$/.test(formData.mobilenumber.trim())) {
+      setError('Mobile number must be exactly 10 digits (e.g., 9876543210).');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
       await onUpdateSuccess(user._id, {
         password: formData.password,
-        name: formData.name,
+        name: formData.name.trim(),
         age: formData.age === '' ? null : formData.age,
-        mobilenumber: formData.mobilenumber,
+        mobilenumber: formData.mobilenumber.trim(),
         newPassword: formData.newPassword || undefined,
       });
       onClose();
@@ -131,16 +136,19 @@ export const UpdateUserModal = ({ user, onClose, onUpdateSuccess }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Mobile Number</label>
+              <label className="form-label">Mobile Number *</label>
               <div className="input-wrapper">
                 <Phone className="input-icon" size={18} />
                 <input
                   type="tel"
                   name="mobilenumber"
                   className="form-input"
-                  placeholder="+1-555-0199"
+                  placeholder="10-digit number (e.g. 9876543210)"
+                  maxLength="10"
+                  pattern="\d{10}"
                   value={formData.mobilenumber}
                   onChange={handleChange}
+                  required
                 />
               </div>
             </div>

@@ -105,7 +105,13 @@ export const updateUser = async (req, res) => {
       targetUser.age = age === '' || age === null ? null : Number(age);
     }
     if (mobilenumber !== undefined) {
-      targetUser.mobilenumber = mobilenumber.trim();
+      const cleanMobile = String(mobilenumber).trim();
+      if (!/^\d{10}$/.test(cleanMobile)) {
+        return res.status(400).json({
+          message: 'Mobile number must be exactly 10 digits (e.g. 9876543210).',
+        });
+      }
+      targetUser.mobilenumber = cleanMobile;
     }
     if (newPassword && newPassword.trim().length >= 6) {
       targetUser.password = newPassword.trim();
@@ -127,6 +133,10 @@ export const updateUser = async (req, res) => {
     });
   } catch (error) {
     console.error('[Update User error]:', error);
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map((val) => val.message);
+      return res.status(400).json({ message: messages.join(', ') });
+    }
     if (error.kind === 'ObjectId') {
       return res.status(400).json({ message: 'Invalid User ID format' });
     }

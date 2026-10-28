@@ -28,8 +28,9 @@ const userSchema = new mongoose.Schema(
     },
     mobilenumber: {
       type: String,
+      required: [true, 'Mobile number is required'],
       trim: true,
-      default: '',
+      match: [/^\d{10}$/, 'Mobile number must be exactly 10 digits'],
     },
   },
   {

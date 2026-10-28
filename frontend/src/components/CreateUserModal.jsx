@@ -21,8 +21,13 @@ export const CreateUserModal = ({ onClose, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.password) {
-      setError('Name, Email, and Password are required fields.');
+    if (!formData.name || !formData.email || !formData.password || !formData.mobilenumber) {
+      setError('Name, Email, Password, and Mobile number are required fields.');
+      return;
+    }
+
+    if (!/^\d{10}$/.test(formData.mobilenumber.trim())) {
+      setError('Mobile number must be exactly 10 digits (e.g., 9876543210).');
       return;
     }
 
@@ -31,11 +36,11 @@ export const CreateUserModal = ({ onClose, onSuccess }) => {
 
     try {
       const res = await api.register({
-        name: formData.name,
-        email: formData.email,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
         password: formData.password,
         age: formData.age ? Number(formData.age) : null,
-        mobilenumber: formData.mobilenumber,
+        mobilenumber: formData.mobilenumber.trim(),
       });
 
       onSuccess(res.user);
@@ -159,16 +164,19 @@ export const CreateUserModal = ({ onClose, onSuccess }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Mobile Number</label>
+              <label className="form-label">Mobile Number *</label>
               <div className="input-wrapper">
                 <Phone className="input-icon" size={18} />
                 <input
                   type="tel"
                   name="mobilenumber"
                   className="form-input"
-                  placeholder="+1-555-0188"
+                  placeholder="10-digit number (e.g. 9876543210)"
+                  maxLength="10"
+                  pattern="\d{10}"
                   value={formData.mobilenumber}
                   onChange={handleChange}
+                  required
                 />
               </div>
             </div>

@@ -17,10 +17,18 @@ export const registerUser = async (req, res) => {
   try {
     const { name, email, password, age, mobilenumber } = req.body;
 
-    // Validate required fields according to whiteboard specs
-    if (!name || !email || !password) {
+    // Validate required fields
+    if (!name || !email || !password || !mobilenumber) {
       return res.status(400).json({
-        message: 'Name, Email, and Password are required fields.',
+        message: 'Name, Email, Password, and Mobile number are required fields.',
+      });
+    }
+
+    // Validate 10 digits
+    const cleanMobile = String(mobilenumber).trim();
+    if (!/^\d{10}$/.test(cleanMobile)) {
+      return res.status(400).json({
+        message: 'Mobile number must be exactly 10 digits (e.g. 9876543210).',
       });
     }
 
@@ -38,7 +46,7 @@ export const registerUser = async (req, res) => {
       email: email.toLowerCase(),
       password,
       age: age ? Number(age) : null,
-      mobilenumber: mobilenumber || '',
+      mobilenumber: cleanMobile,
     });
 
     const token = generateToken(user._id);
@@ -57,6 +65,10 @@ export const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error('[Register error]:', error);
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map((val) => val.message);
+      return res.status(400).json({ message: messages.join(', ') });
+    }
     return res.status(500).json({
       message: error.message || 'Server error during user registration',
     });
