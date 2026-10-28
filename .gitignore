@@ -1,0 +1,140 @@
+# ==============================================================================
+# Git Ignore - Healthcare Full-Stack Application
+# Prioritized for Security, Privacy, and Environment Protection
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment & Secrets (CRITICAL FOR PRIVACY & SECURITY)
+# ------------------------------------------------------------------------------
+# Ignore all environment variable files (contain DB URIs, JWT secrets, API keys)
+.env
+.env.*
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# Allow example / template environment files for safe sharing
+!.env.example
+!.env.template
+
+# Private keys, certificates, and credentials
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+*.csr
+*credential*.json
+*secret*.json
+serviceAccountKey*.json
+firebase-adminsdk*.json
+
+# Postman environment files containing actual tokens/secrets
+*.postman_environment.json
+
+# NPM & Yarn auth credentials
+.npmrc
+.yarnrc
+
+# ------------------------------------------------------------------------------
+# 2. Dependencies
+# ------------------------------------------------------------------------------
+node_modules/
+*/node_modules/
+jspm_packages/
+.pnp/
+.pnp.js
+
+# ------------------------------------------------------------------------------
+# 3. Production Builds & Bundles
+# ------------------------------------------------------------------------------
+dist/
+*/dist/
+build/
+*/build/
+out/
+.next/
+.nuxt/
+.serverless/
+
+# ------------------------------------------------------------------------------
+# 4. Logs & Debugging
+# ------------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ------------------------------------------------------------------------------
+# 5. Database, Dumps & Uploads (PATIENT DATA PROTECTION)
+# ------------------------------------------------------------------------------
+# Database files & local dumps (Crucial for HIPAA / Privacy)
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.dump
+dump/
+dumps/
+backup/
+backups/
+
+# User uploads & media storage (Patient avatars, uploaded documents, PHI)
+uploads/
+*/uploads/
+storage/
+temp/
+tmp/
+
+# ------------------------------------------------------------------------------
+# 6. Test & Code Coverage
+# ------------------------------------------------------------------------------
+coverage/
+*/coverage/
+.nyc_output/
+cypress/videos/
+cypress/screenshots/
+.playwright/
+
+# ------------------------------------------------------------------------------
+# 7. IDE, Code Editors & OS Files
+# ------------------------------------------------------------------------------
+# Operating System
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# IDEs & Editors
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-workspace
+*.sublime-project
+
+# Visual Studio Code (ignore user settings & state, allow recommended extensions)
+.vscode/*
+!.vscode/extensions.json
+
+# ------------------------------------------------------------------------------
+# 8. Temporary Files & Caches
+# ------------------------------------------------------------------------------
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache

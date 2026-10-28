@@ -1,0 +1,14 @@
+{
+  "name": "healthcare-fullstack-app",
+  "version": "1.0.0",
+  "description": "Fullstack Healthcare User Management System with React, Express, and MongoDB",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "test:api": "node test_api.js"
+  },
+  "keywords": ["react", "express", "mongodb", "healthcare", "user-management"],
+  "author": "Antigravity",
+  "license": "ISC"
+}

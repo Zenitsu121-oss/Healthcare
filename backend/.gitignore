@@ -1,0 +1,44 @@
+# Backend - Environment & Secrets
+.env
+.env.*
+*.env
+*.env.local
+!.env.example
+!.env.template
+*.pem
+*.key
+*.cert
+*.crt
+*credential*.json
+*secret*.json
+
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Database & Local Dumps
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+dump/
+dumps/
+backup/
+backups/
+
+# Uploads & Storage
+uploads/
+storage/
+temp/
+tmp/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

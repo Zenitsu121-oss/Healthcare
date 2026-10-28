@@ -1,0 +1,296 @@
+{
+  "info": {
+    "_postman_id": "7f8b9c21-5a6b-4e44-8d9e-1f7c3e5d0a1b",
+    "name": "Healthcare User Management API",
+    "description": "Postman Collection for Healthcare User Management API built with Express.js, MongoDB, and React.\nCovers:\n- User creation (Email*, Password*, Name*, Age, Mobilenumber)\n- User Login (Email, Password)\n- User Get (Get all user list, excludes password)\n- User Search\n- User Get By ID (Particular user, excludes password)\n- User Update (Ask password & match, update details)\n- User Delete (Ask password & match, prevent self deletion)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "targetUserId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth & Creation",
+      "item": [
+        {
+          "name": "1. User Creation (Signup / Register)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('authToken', jsonData.token);",
+                  "}",
+                  "if (jsonData.user && jsonData.user._id) {",
+                  "    pm.collectionVariables.set('targetUserId', jsonData.user._id);",
+                  "}",
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Password is not exposed', function () {",
+                  "    pm.expect(jsonData.user.password).to.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Sarah Connor\",\n  \"email\": \"sarah.connor@healthcare.org\",\n  \"password\": \"Secret@1234\",\n  \"age\": 34,\n  \"mobilenumber\": \"+1-555-0199\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Creates a new user. Required: name, email (unique), password. Optional: age, mobilenumber."
+          },
+          "response": []
+        },
+        {
+          "name": "2. User Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('authToken', jsonData.token);",
+                  "}",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Token received', function () {",
+                  "    pm.expect(jsonData.token).to.not.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sarah.connor@healthcare.org\",\n  \"password\": \"Secret@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticates user with email and password and returns JWT token."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Current User Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Fetches current authenticated user data without password."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "1. User Get (Get All User List)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Users list does not contain passwords', function () {",
+                  "    if (jsonData.users && jsonData.users.length > 0) {",
+                  "        pm.expect(jsonData.users[0].password).to.be.undefined;",
+                  "        pm.collectionVariables.set('targetUserId', jsonData.users[0]._id);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Retrieves list of all users. Excludes password field from response."
+          },
+          "response": []
+        },
+        {
+          "name": "2. User Search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users?search=sarah",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "sarah"
+                }
+              ]
+            },
+            "description": "Searches users matching name, email, or mobile number."
+          },
+          "response": []
+        },
+        {
+          "name": "3. User Get By ID (Particular User)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{targetUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{targetUserId}}"]
+            },
+            "description": "Retrieves single user by their MongoDB ObjectId. Excludes password."
+          },
+          "response": []
+        },
+        {
+          "name": "4. User Update (Ask Password & Match)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"Secret@1234\",\n  \"name\": \"Dr. Sarah Connor MD\",\n  \"age\": 35,\n  \"mobilenumber\": \"+1-555-9988\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{targetUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{targetUserId}}"]
+            },
+            "description": "Updates user details after verifying the password matches."
+          },
+          "response": []
+        },
+        {
+          "name": "5. User Delete (Ask Password & Match, Prevent Self-Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"Secret@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{targetUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{targetUserId}}"]
+            },
+            "description": "Deletes target user after password confirmation. Returns 403 Forbidden if user attempts to delete their own account."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Verifies that the API server is healthy and responding."
+      },
+      "response": []
+    }
+  ]
+}
