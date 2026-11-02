@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: healthcare-backend-api
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm --prefix backend install
+    startCommand: node backend/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: MONGO_URI
+        value: mongodb://dineshyt50_db_user:p.qrtN4T_hD3quS@ac-zn6ggv5-shard-00-02.1qk7ujy.mongodb.net:27017/healthcare?ssl=true&replicaSet=atlas-i3jdsy-shard-0&authSource=admin
+      - key: JWT_SECRET
+        value: super_secure_healthcare_jwt_secret_key_2026_xyz123
+      - key: CLIENT_URL
+        value: "*"

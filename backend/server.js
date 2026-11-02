@@ -29,7 +29,20 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check endpoint
+// Root & Health check endpoints
+app.get(['/', '/health'], (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    message: 'Healthcare User Management API is running live',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      users: '/api/users',
+    },
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
@@ -68,9 +81,9 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`[Server] Express server running on port ${PORT}`);
-  console.log(`[Server] API available at http://localhost:${PORT}/api`);
+  console.log(`[Server] API available at http://0.0.0.0:${PORT}/api`);
 });
 // Healthcare API server
 
